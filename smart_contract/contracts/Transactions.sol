@@ -1,8 +1,10 @@
 //SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
+// import "hardhat/console.sol";
+
 contract Transactions {
-    uint256 transactionCounter;
+    uint256 transactionCount;
 
     event Transfer(
         address from,
@@ -10,6 +12,7 @@ contract Transactions {
         uint amount,
         string message,
         uint256 timestamp,
+        string account,
         string keyword
     );
 
@@ -19,6 +22,7 @@ contract Transactions {
         uint amount;
         string message;
         uint256 timestamp;
+        string account;
         string keyword;
     }
 
@@ -28,9 +32,10 @@ contract Transactions {
         address payable receiver,
         uint amount,
         string memory message,
+        string memory account,
         string memory keyword
     ) public {
-        transactionCounter += 1;
+        transactionCount += 1;
         transactions.push(
             TransferStruct(
                 msg.sender,
@@ -38,6 +43,7 @@ contract Transactions {
                 amount,
                 message,
                 block.timestamp,
+                account,
                 keyword
             )
         );
@@ -48,11 +54,14 @@ contract Transactions {
             amount,
             message,
             block.timestamp,
+            account,
             keyword
         );
+
+        receiver.transfer(amount);
     }
 
-    function gxetAllTransactions()
+    function getAllTransactions()
         public
         view
         returns (TransferStruct[] memory)
@@ -60,7 +69,7 @@ contract Transactions {
         return transactions;
     }
 
-    function getTransactioCount() public view returns (uint256) {
-        return transactionCounter;
+    function getTransactionCount() public view returns (uint256) {
+        return transactionCount;
     }
 }

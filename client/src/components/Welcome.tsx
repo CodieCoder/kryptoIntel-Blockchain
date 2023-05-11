@@ -3,6 +3,8 @@ import { SiEthereum } from "react-icons/si";
 import { BsInfoCircle } from "react-icons/bs";
 
 import { Loader } from "./";
+import { useTransactioContext } from "./context/useTransactionContext";
+import { shortenAddress } from "../utils/shortenAddress";
 
 const CommonStyles =
   "min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-gray-400 text-sm font-light text-white";
@@ -20,17 +22,32 @@ const Input: React.FC<IInput> = ({ placeholder, handleChange, name, type }) => {
       placeholder={placeholder}
       type={type}
       step="0.0001"
-      value={"value"}
+      // value={"value"}
       name={name}
+      onChange={(e) => handleChange(e, name)}
       className="my-2 w-full rounded-sm p-2 outline-none bg-transparent text-white border-none text-sm white-glassmorphism"
     />
   );
 };
 
 const Welcome = () => {
-  const connectWallet = () => {};
-  const handleChange = () => {};
-  const handleSubmit = () => {};
+  const {
+    connectWallet,
+    currentAccount,
+    formData,
+    handleChange,
+    sendTransaction,
+  } = useTransactioContext();
+
+  const handleSubmit = (e: any) => {
+    const { addressTo, amount, keyword, message } = formData;
+
+    e.preventDefault();
+
+    if (!addressTo || !amount || !keyword || !message) return;
+
+    sendTransaction();
+  };
   return (
     <div className="flex w-full justify-center item-center">
       <div className="flex mf:flex-row flex-col item-start justify-between md:p-20 py-12 px-4">
@@ -41,12 +58,16 @@ const Welcome = () => {
           <p className="text-left mt-5 text-white font-light md:w-9/12 w-11/12 text-base">
             Explore the Crypto world. Buy and sell Cryptocurrencies on Krypt
           </p>
-          <button
-            onClick={connectWallet}
-            className="flex flex-row justify-center items-center my-5 bg-[#2952e3] p-3 rounded-full cursor-pointer hover:bg-[#2546bd]"
-          >
-            <p className="text-white text-base font-semibold">Connect Wallet</p>
-          </button>
+          {!currentAccount && (
+            <button
+              onClick={connectWallet}
+              className="flex flex-row justify-center items-center my-5 bg-[#2952e3] p-3 rounded-full cursor-pointer hover:bg-[#2546bd]"
+            >
+              <p className="text-white text-base font-semibold">
+                Connect Wallet
+              </p>
+            </button>
+          )}
 
           <div className="grid sm:grid-cols-3 grid-cols-2 w-full mt-10">
             <div className={`rounded-tl-2xl ${CommonStyles}`}>Reliability</div>
@@ -68,8 +89,11 @@ const Welcome = () => {
                 <BsInfoCircle fontSize={17} color="#fff" />
               </div>
               <div>
-                <p className="text-white font-light text-sm">
-                  0Xjnkankajnkad .....ajajk
+                <p
+                  className="text-white font-light text-sm"
+                  title={currentAccount}
+                >
+                  {currentAccount && shortenAddress(currentAccount)}
                 </p>
                 <p className="text-white font-semibold text-lg mt-1">
                   Ethereum
@@ -104,7 +128,7 @@ const Welcome = () => {
               handleChange={handleChange}
             />
             <div className="h-[1px] w-full bg-gray-400" />
-            {true ? (
+            {false ? (
               <Loader />
             ) : (
               <button

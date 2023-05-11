@@ -76,7 +76,7 @@
     },
     {
       "inputs": [],
-      "name": "getTransactioCount",
+      "name": "getTransactionCount",
       "outputs": [
         {
           "internalType": "uint256",
@@ -89,7 +89,7 @@
     },
     {
       "inputs": [],
-      "name": "gxetAllTransactions",
+      "name": "getAllTransactions",
       "outputs": [
         {
           "components": [
