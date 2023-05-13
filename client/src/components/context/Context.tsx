@@ -22,7 +22,7 @@ const TransactionContext: React.Context<ITransactionContext> =
     connectWallet: undefined,
     currentAccount: undefined,
     formData: { addressTo: "", amount: "", keyword: "", message: "" },
-    handleChange: (e, name) => {},
+    handleChange: () => {},
     sendTransaction: undefined,
     transactions: undefined,
     transactionCount: undefined,

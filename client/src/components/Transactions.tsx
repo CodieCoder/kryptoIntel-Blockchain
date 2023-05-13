@@ -2,8 +2,6 @@ import React from "react";
 import { useTransactioContext } from "./context/useTransactionContext";
 import { shortenAddress } from "../utils/shortenAddress";
 import useFetch from "../hooks/useFetch";
-import dummyData from "../utils/dummyData";
-
 interface ITransactionCard {
   addressTo: string;
   addressFrom: string;
