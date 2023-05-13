@@ -15,7 +15,7 @@ const NavbarItem: React.FC<INavbarItem> = ({ title, classProps }) => {
   return <li className={`mx-4 cursor-pointer ${classProps}`}>{title}</li>;
 };
 
-const NavBar = () => {
+const NavBar: React.FC = () => {
   const [toggleMenu, setToggleMenu] = useState(false);
   return (
     <nav className="w-full flex md:justify-center justify-between items-center p-4">

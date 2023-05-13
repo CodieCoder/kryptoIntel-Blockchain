@@ -1,7 +1,7 @@
-//SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-// import "hardhat/console.sol";
+import "hardhat/console.sol";
 
 contract Transactions {
     uint256 transactionCount;
@@ -12,7 +12,6 @@ contract Transactions {
         uint amount,
         string message,
         uint256 timestamp,
-        string account,
         string keyword
     );
 
@@ -22,7 +21,6 @@ contract Transactions {
         uint amount;
         string message;
         uint256 timestamp;
-        string account;
         string keyword;
     }
 
@@ -32,7 +30,6 @@ contract Transactions {
         address payable receiver,
         uint amount,
         string memory message,
-        string memory account,
         string memory keyword
     ) public {
         transactionCount += 1;
@@ -43,7 +40,6 @@ contract Transactions {
                 amount,
                 message,
                 block.timestamp,
-                account,
                 keyword
             )
         );
@@ -54,11 +50,10 @@ contract Transactions {
             amount,
             message,
             block.timestamp,
-            account,
             keyword
         );
 
-        receiver.transfer(amount);
+        // receiver.transfer(amount);
     }
 
     function getAllTransactions()

@@ -11,8 +11,12 @@ interface ITransactionContext {
   };
   handleChange: (e: any, name: string) => void;
   sendTransaction: any;
+  transactions: any;
+  transactionCount: any;
+  isLoading: boolean;
 }
 
+//@ts-ignore
 const TransactionContext: React.Context<ITransactionContext> =
   React.createContext({
     connectWallet: undefined,
@@ -20,6 +24,9 @@ const TransactionContext: React.Context<ITransactionContext> =
     formData: { addressTo: "", amount: "", keyword: "", message: "" },
     handleChange: (e, name) => {},
     sendTransaction: undefined,
+    transactions: undefined,
+    transactionCount: undefined,
+    isLoading: false,
   });
 
 export default TransactionContext;

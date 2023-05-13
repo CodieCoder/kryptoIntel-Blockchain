@@ -30,13 +30,14 @@ const Input: React.FC<IInput> = ({ placeholder, handleChange, name, type }) => {
   );
 };
 
-const Welcome = () => {
+const Welcome: React.FC = () => {
   const {
     connectWallet,
     currentAccount,
     formData,
     handleChange,
     sendTransaction,
+    isLoading,
   } = useTransactioContext();
 
   const handleSubmit = (e: any) => {
@@ -60,9 +61,11 @@ const Welcome = () => {
           </p>
           {!currentAccount && (
             <button
+              type="button"
               onClick={connectWallet}
               className="flex flex-row justify-center items-center my-5 bg-[#2952e3] p-3 rounded-full cursor-pointer hover:bg-[#2546bd]"
             >
+              <AiFillPlayCircle className="text-white mr-2" />
               <p className="text-white text-base font-semibold">
                 Connect Wallet
               </p>
@@ -128,7 +131,7 @@ const Welcome = () => {
               handleChange={handleChange}
             />
             <div className="h-[1px] w-full bg-gray-400" />
-            {false ? (
+            {isLoading ? (
               <Loader />
             ) : (
               <button

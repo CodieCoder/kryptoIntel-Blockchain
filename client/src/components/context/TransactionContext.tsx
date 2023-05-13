@@ -3,17 +3,18 @@ import TransactionContext from "./Context";
 import { ethers } from "ethers";
 import { contractABI, contractAddress } from "../../utils/constants";
 
-//@ts-ignore
+// @ts-ignore
 const { ethereum } = window;
 
-const getEthereumContract = async () => {
-  const provider = new ethers.BrowserProvider(ethereum);
-  const signer = await provider.getSigner();
+const getEthereumContract = () => {
+  const provider = new ethers.providers.Web3Provider(ethereum);
+  const signer = provider.getSigner();
   const transactionContract = new ethers.Contract(
     contractAddress,
     contractABI,
     signer
   );
+
   return transactionContract;
 };
 
@@ -32,7 +33,7 @@ const TransactionProvider: React.FC<ITransactionContext> = ({ children }) => {
   const [transactionCount, setTransactionCount] = useState(
     window.localStorage.getItem("transactionCount")
   );
-  const [transactions, setTransactions] = useState<any>();
+  const [transactions, setTransactions] = useState([]);
 
   const handleChange = (e: any, name: string) => {
     setFormData((prevState: any) => ({ ...prevState, [name]: e.target.value }));
@@ -42,7 +43,7 @@ const TransactionProvider: React.FC<ITransactionContext> = ({ children }) => {
     try {
       if (!ethereum) return alert("Please install metamask");
 
-      const transactionContract = await getEthereumContract();
+      const transactionContract = getEthereumContract();
 
       const availableTransactions =
         await transactionContract.getAllTransactions();
@@ -52,20 +53,22 @@ const TransactionProvider: React.FC<ITransactionContext> = ({ children }) => {
           addressTo: transaction.receiver,
           addressFrom: transaction.sender,
           timestamp: new Date(
-            transaction.timestamp.toNumber * 1000
+            transaction.timestamp.toNumber() * 1000
           ).toLocaleString(),
           message: transaction.message,
           keyword: transaction.keyword,
-          amount: parseInt(transaction.amount._hex) * 10 ** 18,
+          amount: parseInt(transaction.amount._hex) / 10 ** 18,
         })
       );
 
-      setTransactions(structuredTransactions);
       console.log(structuredTransactions);
+
+      setTransactions(structuredTransactions);
     } catch (error) {
       console.log(error);
     }
   };
+
   const checkIfWalletIsConnected = async () => {
     try {
       if (!ethereum) return alert("Please install metamask");
@@ -74,7 +77,7 @@ const TransactionProvider: React.FC<ITransactionContext> = ({ children }) => {
 
       if (accounts.length) {
         setCurrentAccount(accounts[0]);
-        console.log("Accounts : ", accounts);
+
         getAllTransactions();
       } else {
         console.log("No accounts found");
@@ -89,8 +92,9 @@ const TransactionProvider: React.FC<ITransactionContext> = ({ children }) => {
   const checkIfTransactionsExist = async () => {
     try {
       if (!ethereum) return alert("Please install metamask");
-      const transactionContract = await getEthereumContract();
+      const transactionContract = getEthereumContract();
       const transactionCount = await transactionContract.getTransactionCount();
+
       window.localStorage.setItem("transactionCount", transactionCount);
     } catch (error) {
       console.log(error);
@@ -108,6 +112,7 @@ const TransactionProvider: React.FC<ITransactionContext> = ({ children }) => {
       });
 
       setCurrentAccount(accounts[0]);
+      window.location.reload();
     } catch (error) {
       console.log(error);
 
@@ -120,10 +125,9 @@ const TransactionProvider: React.FC<ITransactionContext> = ({ children }) => {
       if (!ethereum) return alert("Please install metamask");
 
       const { addressTo, amount, keyword, message } = formData;
-      const transactionContract = await getEthereumContract();
+      const transactionContract = getEthereumContract();
 
-      let parsedAmount: any = ethers.parseEther(amount.toString());
-      parsedAmount = ethers.toBeHex(parsedAmount);
+      let parsedAmount = ethers.utils.parseEther(amount);
 
       await ethereum.request({
         method: "eth_sendTransaction",
@@ -132,7 +136,7 @@ const TransactionProvider: React.FC<ITransactionContext> = ({ children }) => {
             from: currentAccount,
             to: addressTo,
             gas: "0x5208", //2100 GWEI
-            value: parsedAmount, //hexadecimal value
+            value: parsedAmount._hex, //hexadecimal value
           },
         ],
       });
@@ -141,7 +145,6 @@ const TransactionProvider: React.FC<ITransactionContext> = ({ children }) => {
         addressTo,
         parsedAmount,
         message,
-        currentAccount,
         keyword
       );
 
@@ -154,6 +157,7 @@ const TransactionProvider: React.FC<ITransactionContext> = ({ children }) => {
       const transactionCount = await transactionContract.getTransactionCount();
 
       setTransactionCount(transactionCount.toNumber());
+      window.location.reload();
     } catch (error) {
       console.log(error);
 
@@ -164,7 +168,7 @@ const TransactionProvider: React.FC<ITransactionContext> = ({ children }) => {
   useEffect(() => {
     checkIfWalletIsConnected();
     checkIfTransactionsExist();
-  }, []);
+  }, [transactionCount]);
 
   return (
     <TransactionContext.Provider
@@ -174,6 +178,9 @@ const TransactionProvider: React.FC<ITransactionContext> = ({ children }) => {
         formData,
         handleChange,
         sendTransaction,
+        transactions,
+        transactionCount,
+        isLoading,
       }}
     >
       {children}

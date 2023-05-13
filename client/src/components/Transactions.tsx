@@ -1,9 +1,8 @@
 import React from "react";
 import { useTransactioContext } from "./context/useTransactionContext";
-
-import dummyData from "../utils/dummyData";
 import { shortenAddress } from "../utils/shortenAddress";
 import useFetch from "../hooks/useFetch";
+import dummyData from "../utils/dummyData";
 
 interface ITransactionCard {
   addressTo: string;
@@ -75,8 +74,8 @@ const TransactionCard: React.FC<ITransactionCard> = ({
     </div>
   );
 };
-const Transactions = () => {
-  const { currentAccount } = useTransactioContext();
+const Transactions: React.FC = () => {
+  const { currentAccount, transactions } = useTransactioContext();
 
   return (
     <div className="flex w-full justify-center items-center 2xl:px-20 gradient-bg-transactions">
@@ -91,7 +90,7 @@ const Transactions = () => {
           </h3>
         )}
         <div className="flex flex-wrap justify-center items-center mt-10">
-          {dummyData.reverse().map((transaction: any, index: number) => {
+          {transactions.reverse().map((transaction: any, index: number) => {
             return <TransactionCard key={index} {...transaction} />;
           })}
         </div>
